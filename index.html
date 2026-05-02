@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ebe5d6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MisContactos">
+<title>MisContactos · Edizione Privata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* PRADA-INSPIRED PALETTE */
+    --cream: #ebe5d6;
+    --cream-soft: #f0ead9;
+    --paper: #faf6ec;
+    --ink: #1a1814;
+    --ink-soft: #2c2924;
+    --text: #1a1814;
+    --text-muted: #847f73;
+    --text-subtle: #b8b1a0;
+    --rule: rgba(26,24,20,0.10);
+    --rule-strong: rgba(26,24,20,0.22);
+    --sage: #6b8973;
+    --sage-deep: #4f6b58;
+    --sage-dim: rgba(107,137,115,0.12);
+    --accent: var(--ink);
+    --accent2: var(--sage-deep);
+    --accent-dim: rgba(26,24,20,0.06);
+    --danger: #8b4d56;
+    --danger-dim: rgba(139,77,86,0.10);
+    --success: var(--sage-deep);
+    --radius: 2px;
+    --radius-sm: 2px;
+    --shadow: 0 1px 0 rgba(26,24,20,0.04), 0 12px 36px rgba(26,24,20,0.06);
+    --serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100dvh;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    background: var(--cream);
+    overflow: hidden;
+    border-bottom: 1px solid var(--ink);
+  }
+  .hero::before {
+    /* saffiano dot pattern */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(26,24,20,0.07) 0.8px, transparent 1.4px);
+    background-size: 9px 9px;
+    background-position: 0 0;
+    pointer-events: none;
+    opacity: 0.65;
+    mix-blend-mode: multiply;
+  }
+  .hero::after {
+    /* subtle gradient overlay for depth */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(250,246,236,0.6) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 22px;
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink);
+    position: relative;
+    z-index: 3;
+  }
+  .hero-bar-top { padding-top: 50px; border-bottom: 1px solid var(--rule); }
+  .hero-bar-bottom { border-top: 1px solid var(--rule); padding: 13px 22px; }
+  .hero-bar-bottom .dot { color: var(--text-subtle); margin: 0 8px; }
+  .hero-bar-bottom span { display: inline; }
+  .hero-bar-bottom { justify-content: center; }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 38px 24px 32px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 0.92;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+  }
+  .hero-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    margin-top: 12px;
+  }
+  .hero-mark {
+    width: 14px;
+    height: 12px;
+    margin: 22px auto 18px;
+    display: block;
+    color: var(--sage-deep);
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    display: block;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .hero-stat-divider {
+    width: 1px; height: 28px;
+    background: var(--rule-strong);
+  }
+
+  /* SVG botanical motif */
+  .hero-flora {
+    position: absolute;
+    top: 78px;
+    width: 44px;
+    height: 220px;
+    color: var(--ink);
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .hero-flora-left { left: 14px; }
+  .hero-flora-right { right: 14px; transform: scaleX(-1); }
+
+  /* ===== INSTALL BANNER ===== */
+  .install-banner {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 12px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .install-text { flex: 1; }
+  .install-close { padding: 4px; cursor: pointer; opacity: 0.6; }
+
+  /* ===== SEARCH ===== */
+  .search-wrap { padding: 22px 22px 6px; }
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--rule-strong);
+    border-radius: 0;
+    padding: 0;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus-within { border-color: var(--ink); }
+  .search-icon { font-size: 13px; opacity: 0.5; padding-bottom: 2px; }
+  .search-box input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 14px;
+    padding: 12px 0;
+    outline: none;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .search-box input::placeholder { color: var(--text-muted); opacity: 0.7; }
+  .search-clear {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .search-clear.visible { display: block; }
+
+  /* ===== TAG FILTERS ===== */
+  .tags-scroll {
+    display: flex;
+    gap: 0;
+    padding: 16px 22px 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tags-scroll::-webkit-scrollbar { display: none; }
+  .tag-chip {
+    flex-shrink: 0;
+    padding: 4px 0 6px;
+    margin-right: 22px;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    border: none;
+    border-bottom: 1px solid transparent;
+    user-select: none;
+    font-family: var(--sans);
+    white-space: nowrap;
+  }
+  .tag-chip:last-child { margin-right: 0; }
+  .tag-chip.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  /* ===== CONTACTS LIST ===== */
+  .contacts-list {
+    padding: 0 22px 130px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .contact-card {
+    background: transparent;
+    border-radius: 0;
+    padding: 20px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    position: relative;
+    border-bottom: 1px solid var(--rule);
+  }
+  .contact-card:active { opacity: 0.55; }
+  .contact-card:last-child { border-bottom: none; }
+  .contact-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cream);
+    flex-shrink: 0;
+    text-transform: uppercase;
+    font-family: var(--serif);
+    letter-spacing: 0.06em;
+    border: 1px solid var(--rule-strong);
+  }
+  .contact-info { flex: 1; min-width: 0; padding-top: 4px; }
+  .contact-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0;
+    line-height: 1.15;
+  }
+  .contact-role {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: var(--sans);
+  }
+  .contact-tag {
+    display: inline-block;
+    font-size: 8.5px;
+    font-weight: 500;
+    padding: 3px 9px 3px 9px;
+    border-radius: 0;
+    margin-top: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    border: 1px solid currentColor;
+    background: transparent !important;
+    font-family: var(--sans);
+  }
+  .contact-notes {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 9px;
+    font-style: italic;
+    font-family: var(--serif);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  /* AVATAR WITH PHOTO */
+  .contact-avatar.has-photo, .detail-avatar.has-photo, .photo-preview.has-photo, .related-result-avatar.has-photo {
+    background-size: cover;
+    background-position: center;
+    color: transparent;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 90px 24px;
+    color: var(--text-muted);
+  }
+  .empty-icon {
+    font-size: 24px;
+    margin-bottom: 18px;
+    font-family: var(--serif);
+    font-style: italic;
+    letter-spacing: 0.4em;
+    color: var(--text-subtle);
+  }
+  .empty-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .empty-sub {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: var(--sans);
+  }
+
+  /* ===== FAB ===== */
+  .fab {
+    position: fixed;
+    bottom: 28px;
+    right: 50%;
+    transform: translateX(min(50%, 216px));
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 0;
+    padding: 16px 30px;
+    font-size: 10px;
+    font-weight: 500;
+    font-family: var(--sans);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    box-shadow: 0 12px 28px rgba(26,24,20,0.22);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.15s;
+    z-index: 50;
+  }
+  .fab:active { transform: translateX(min(50%, 216px)) scale(0.96); }
+  .fab span { font-size: 13px; font-weight: 300; line-height: 1; }
+
+  /* ===== OVERLAY / SHEET ===== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,24,20,0.42);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .overlay.open { display: flex; justify-content: center; align-items: flex-end; }
+  .overlay.visible { opacity: 1; }
+  .sheet {
+    background: var(--paper);
+    border-radius: 0;
+    width: 100%;
+    max-width: 480px;
+    max-height: 92dvh;
+    overflow-y: auto;
+    padding: 14px 26px 40px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    border-top: 1px solid var(--ink);
+    position: relative;
+  }
+  .overlay.visible .sheet { transform: translateY(0); }
+  .sheet-handle {
+    width: 32px; height: 2px;
+    background: var(--rule-strong);
+    border-radius: 0;
+    margin: 0 auto 22px;
+  }
+  .sheet-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+    text-align: center;
+    letter-spacing: -0.005em;
+  }
+  .sheet-title-rule {
+    width: 36px;
+    height: 1px;
+    background: var(--ink);
+    margin: 14px auto 24px;
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 22px; }
+  .form-label {
+    display: block;
+    font-size: 8.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    margin-bottom: 10px;
+    font-family: var(--sans);
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--rule-strong);
+    border-radius: 0;
+    color: var(--ink);
+    font-size: 16px;
+    padding: 6px 0 10px;
+    font-family: var(--serif);
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 400;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-bottom-color: var(--ink);
+  }
+  .form-select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%231a1814' stroke-width='1' fill='none' stroke-linecap='square'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 24px;
+  }
+  .form-textarea { resize: vertical; min-height: 50px; padding: 6px 0 10px; line-height: 1.45; }
+  .form-input::placeholder, .form-textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.55;
+    font-style: italic;
+  }
+  .form-input[type="date"] {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 32px;
+  }
+  .btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 0;
+    font-size: 10px;
+    font-weight: 500;
+    font-family: var(--sans);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s;
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn:active { opacity: 0.65; }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    font-size: 9.5px;
+    padding: 13px;
+    letter-spacing: 0.26em;
+  }
+
+  /* DETAIL */
+  .detail-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 28px;
+    padding-top: 8px;
+  }
+  .detail-avatar {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    font-family: var(--serif);
+    color: var(--cream);
+    background: var(--ink);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    border: 1px solid var(--rule-strong);
+    letter-spacing: 0.04em;
+  }
+  .detail-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 1.45;
+  }
+  .detail-row span { flex: 1; }
+  .detail-row-icon {
+    width: 30px; height: 30px;
+    border-radius: 0;
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    color: var(--ink);
+    margin-top: 1px;
+  }
+  .detail-row a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .detail-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 32px;
+  }
+
+  /* ===== PHOTO PICKER (FORM) ===== */
+  .photo-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4px 0 26px;
+    gap: 12px;
+  }
+  .photo-preview {
+    width: 116px; height: 116px;
+    border-radius: 50%;
+    background: var(--cream-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--rule-strong);
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+  }
+  .photo-preview.has-photo { border-color: var(--ink); }
+  .photo-preview:active { transform: scale(0.97); }
+  .photo-preview-hint {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-top: 4px;
+  }
+  .photo-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .photo-btn {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    padding: 8px 14px;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .photo-btn:active { opacity: 0.6; }
+  .photo-btn.danger { color: var(--danger); border-color: var(--danger); }
+
+  /* ===== RELATED ===== */
+  .related-search-wrap { position: relative; }
+  .related-results {
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    border-radius: 0;
+    margin-top: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 8px 24px rgba(26,24,20,0.06);
+  }
+  .related-results.visible { display: block; }
+  .related-result {
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .related-result:last-child { border-bottom: none; }
+  .related-result:active { background: var(--cream-soft); }
+  .related-result-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--cream);
+    background: var(--ink);
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    font-family: var(--serif);
+    letter-spacing: 0.04em;
+    border: 1px solid var(--rule-strong);
+  }
+  .related-result-name {
+    font-size: 15px;
+    flex: 1;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 500;
+  }
+  .related-result-role {
+    font-size: 8.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-family: var(--sans);
+    margin-top: 3px;
+  }
+
+  .related-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .related-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--ink);
+    padding: 6px 4px 6px 12px;
+    border-radius: 0;
+    font-size: 11px;
+    border: 1px solid var(--ink);
+    font-family: var(--sans);
+    letter-spacing: 0.06em;
+  }
+  .related-chip-remove {
+    width: 18px; height: 18px;
+    border-radius: 0;
+    background: var(--ink);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 9px;
+    line-height: 1;
+  }
+
+  /* DETAIL: section labels */
+  .detail-section-label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    margin: 30px 0 14px;
+    text-align: center;
+    font-family: var(--sans);
+  }
+  .detail-section-label::before, .detail-section-label::after {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--rule-strong);
+    vertical-align: middle;
+    margin: 0 14px;
+  }
+  .detail-related-list { display: flex; flex-direction: column; gap: 0; }
+  .detail-related-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: transparent;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .detail-related-item:active { opacity: 0.55; }
+  .detail-related-item:last-child { border-bottom: none; }
+  .detail-related-item .related-result-avatar { width: 42px; height: 42px; font-size: 12px; }
+  .detail-related-item .rel-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .detail-arrow { color: var(--text-muted); font-size: 18px; font-family: var(--serif); }
+
+  /* ANIMATION */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .contact-card { animation: fadeIn 0.45s ease both; }
+
+  /* Triangle motif (Prada signature) */
+  .prada-triangle {
+    display: inline-block;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <svg class="hero-flora hero-flora-left" viewBox="0 0 50 240" aria-hidden="true">
+    <g stroke="currentColor" stroke-width="0.6" fill="none" stroke-linecap="round">
+      <path d="M 25 232 Q 22 180 25 130 Q 28 78 25 28"/>
+      <path d="M 25 200 Q 13 196 6 188"/>
+      <path d="M 25 200 Q 13 199 6 209"/>
+      <path d="M 25 158 Q 38 154 45 150"/>
+      <path d="M 25 158 Q 38 157 45 167"/>
+      <path d="M 25 116 Q 13 112 6 108"/>
+      <path d="M 25 116 Q 13 115 6 124"/>
+      <path d="M 25 76 Q 38 72 44 67"/>
+      <path d="M 25 76 Q 38 75 44 84"/>
+      <circle cx="25" cy="28" r="3"/>
+      <path d="M 25 28 L 19 22 M 25 28 L 31 22 M 25 28 L 17 31 M 25 28 L 33 31 M 25 28 L 25 19"/>
+    </g>
+  </svg>
+  <svg class="hero-flora hero-flora-right" viewBox="0 0 50 240" aria-hidden="true">
+    <g stroke="currentColor" stroke-width="0.6" fill="none" stroke-linecap="round">
+      <path d="M 25 232 Q 22 180 25 130 Q 28 78 25 28"/>
+      <path d="M 25 200 Q 13 196 6 188"/>
+      <path d="M 25 200 Q 13 199 6 209"/>
+      <path d="M 25 158 Q 38 154 45 150"/>
+      <path d="M 25 158 Q 38 157 45 167"/>
+      <path d="M 25 116 Q 13 112 6 108"/>
+      <path d="M 25 116 Q 13 115 6 124"/>
+      <path d="M 25 76 Q 38 72 44 67"/>
+      <path d="M 25 76 Q 38 75 44 84"/>
+      <circle cx="25" cy="28" r="3"/>
+      <path d="M 25 28 L 19 22 M 25 28 L 31 22 M 25 28 L 17 31 M 25 28 L 33 31 M 25 28 L 25 19"/>
+    </g>
+  </svg>
+
+  <div class="hero-bar hero-bar-top">
+    <span>Edizione Privata · N°01</span>
+    <span>MMXXVI</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">— atelier privato —</div>
+    <h1 class="hero-title">Mis<em>Contactos</em></h1>
+    <div class="hero-subtitle">agenda íntima · personas que importan</div>
+
+    <svg class="hero-mark" viewBox="0 0 30 26" aria-hidden="true">
+      <polygon points="15,3 27,23 3,23" fill="none" stroke="currentColor" stroke-width="0.9"/>
+    </svg>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="totalCount">0</span>
+        <span class="hero-stat-label">Contactos</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="tagsCount">0</span>
+        <span class="hero-stat-label">Categorías</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-bar hero-bar-bottom">
+    <span>Moda</span><span class="dot">·</span><span>Encuentros</span><span class="dot">·</span><span>Vínculos</span>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" style="display:none">
+  <span style="font-size:13px">▲</span>
+  <div class="install-text">Instalar la aplicación · acceso offline</div>
+  <span class="install-close" id="installClose">✕</span>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="buscar por nombre, vínculo, nota…" autocomplete="off">
+    <button class="search-clear" id="searchClear">✕</button>
+  </div>
+</div>
+
+<!-- TAG FILTERS -->
+<div class="tags-scroll" id="tagFilters">
+  <div class="tag-chip active" data-tag="todos">Todos</div>
+</div>
+
+<!-- CONTACTS -->
+<div class="contacts-list" id="contactsList"></div>
+
+<!-- FAB -->
+<button class="fab" id="addBtn">
+  <span>＋</span> Nuevo contacto
+</button>
+
+<!-- OVERLAY: FORM -->
+<div class="overlay" id="formOverlay">
+  <div class="sheet" id="formSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="formTitle">Nuevo contacto</div>
+    <div class="sheet-title-rule"></div>
+    <input type="hidden" id="editId">
+
+    <!-- FOTO -->
+    <div class="photo-picker">
+      <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
+        <span id="photoPlaceholder">◯</span>
+      </div>
+      <div class="photo-actions">
+        <button type="button" class="photo-btn" onclick="document.getElementById('photoInput').click()">Elegir foto</button>
+        <button type="button" class="photo-btn danger" id="photoRemoveBtn" style="display:none" onclick="clearPhoto()">Quitar</button>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" capture="user" style="display:none">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nombre completo</label>
+      <input class="form-input" id="fNombre" type="text" placeholder="Ej: María García">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Categoría</label>
+      <div style="display:flex; gap:10px; align-items:flex-end;">
+        <select class="form-select" id="fCategoria" style="flex:1"></select>
+        <button type="button" class="photo-btn" id="addCategoryBtn" style="white-space:nowrap;">+ Nueva</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">¿Cuándo lo conociste?</label>
+      <input class="form-input" id="fConocidoFecha" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">¿Cómo lo conociste?</label>
+      <textarea class="form-textarea" id="fConocidoComo" placeholder="Ej: en la fashion week, me lo presentó Sofía…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Personas relacionadas</label>
+      <div class="related-search-wrap">
+        <input class="form-input" id="fRelatedSearch" type="text" placeholder="buscar contacto para vincular…" autocomplete="off">
+        <div class="related-results" id="relatedResults"></div>
+      </div>
+      <div class="related-chips" id="relatedChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notas</label>
+      <textarea class="form-textarea" id="fNotas" placeholder="datos importantes, contexto, observaciones…"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+      <button class="btn btn-primary" id="saveBtn">Guardar</button>
+    </div>
+    <button class="btn btn-danger" id="deleteBtn" style="display:none; margin-top:12px; width:100%;">Eliminar contacto</button>
+  </div>
+</div>
+
+<!-- OVERLAY: DETAIL -->
+<div class="overlay" id="detailOverlay">
+  <div class="sheet" id="detailSheet">
+    <div class="sheet-handle"></div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const BASE_TAGS = {
+  moda:         { label: 'Moda',         icon: '👗', color: '#a06877', bg: 'rgba(160,104,119,0.08)' },
+  inmobiliaria: { label: 'Inmobiliaria', icon: '🏛', color: '#5b6e8a', bg: 'rgba(91,110,138,0.08)' },
+  salidas:      { label: 'Salidas',      icon: '🥂', color: '#8b5d3a', bg: 'rgba(139,93,58,0.08)' },
+  medios:       { label: 'Medios',       icon: '✦',  color: '#3d4a3a', bg: 'rgba(61,74,58,0.08)' },
+  personal:     { label: 'Personal',     icon: '♡',  color: '#6b8973', bg: 'rgba(107,137,115,0.08)' },
+  otro:         { label: 'Otro',         icon: '◆',  color: '#847f73', bg: 'rgba(132,127,115,0.08)' }
+};
+const TAG_COLOR_PALETTE = [
+  { color: '#5b4f42', bg: 'rgba(91,79,66,0.08)' },
+  { color: '#8b4d56', bg: 'rgba(139,77,86,0.08)' },
+  { color: '#4f6b58', bg: 'rgba(79,107,88,0.08)' },
+  { color: '#a87d5b', bg: 'rgba(168,125,91,0.08)' },
+  { color: '#4a5878', bg: 'rgba(74,88,120,0.08)' },
+  { color: '#7a5d6f', bg: 'rgba(122,93,111,0.08)' }
+];
+const AVATAR_COLORS = ['#1a1814','#3d3631','#5b6e8a','#6b8973','#8b4d56','#4f6b58','#a06877','#5b4f42'];
+const STORAGE_KEY = 'miscontactos_data';
+const CUSTOM_TAGS_KEY = 'miscontactos_tags';
+let customTags = JSON.parse(localStorage.getItem(CUSTOM_TAGS_KEY) || '{}');
+let TAGS = { ...BASE_TAGS, ...customTags };
+function saveCustomTags() { localStorage.setItem(CUSTOM_TAGS_KEY, JSON.stringify(customTags)); }
+function rebuildTags() { TAGS = { ...BASE_TAGS, ...customTags }; }
+function slugify(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'cat_' + Date.now().toString(36);
+}
+function populateCategoriaSelect(selected) {
+  const sel = document.getElementById('fCategoria');
+  const order = Object.keys(TAGS).filter(k => k !== 'otro').concat(['otro']);
+  sel.innerHTML = order.map(k => {
+    const t = TAGS[k];
+    return `<option value="${k}"${k === selected ? ' selected' : ''}>${t.icon} ${t.label}</option>`;
+  }).join('');
+}
+
+// ===== STATE =====
+let contacts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let activeTag = 'todos';
+let searchQuery = '';
+let formRelated = [];
+let formPhoto = '';
+
+// ===== HELPERS =====
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function initials(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+function avatarColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts)); }
+
+// ===== FOTO: redimensionar para ahorrar storage =====
+function resizeImage(file, maxSize = 480, quality = 0.78) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxSize) { height = height * (maxSize / width); width = maxSize; }
+        else if (height > maxSize) { width = width * (maxSize / height); height = maxSize; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setPhotoPreview(dataUrl) {
+  formPhoto = dataUrl || '';
+  const preview = document.getElementById('photoPreview');
+  const placeholder = document.getElementById('photoPlaceholder');
+  const removeBtn = document.getElementById('photoRemoveBtn');
+  if (formPhoto) {
+    preview.style.backgroundImage = `url(${formPhoto})`;
+    preview.classList.add('has-photo');
+    placeholder.style.display = 'none';
+    removeBtn.style.display = 'inline-block';
+  } else {
+    preview.style.backgroundImage = '';
+    preview.classList.remove('has-photo');
+    placeholder.style.display = 'block';
+    removeBtn.style.display = 'none';
+  }
+}
+function clearPhoto() { setPhotoPreview(''); }
+
+// ===== RELACIONADOS =====
+function renderRelatedChips() {
+  const wrap = document.getElementById('relatedChips');
+  if (!formRelated.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = formRelated.map(id => {
+    const c = contacts.find(x => x.id === id);
+    if (!c) return '';
+    return `<span class="related-chip">${c.nombre}<span class="related-chip-remove" data-id="${id}">✕</span></span>`;
+  }).join('');
+  wrap.querySelectorAll('.related-chip-remove').forEach(el => {
+    el.addEventListener('click', () => {
+      formRelated = formRelated.filter(x => x !== el.dataset.id);
+      renderRelatedChips();
+    });
+  });
+}
+
+function renderRelatedSearch(query) {
+  const results = document.getElementById('relatedResults');
+  const editingId = document.getElementById('editId').value;
+  const q = (query || '').toLowerCase().trim();
+  if (!q) { results.classList.remove('visible'); results.innerHTML = ''; return; }
+  const matches = contacts.filter(c =>
+    c.id !== editingId &&
+    !formRelated.includes(c.id) &&
+    ((c.nombre || '').toLowerCase().includes(q) ||
+     (c.conocidoComo || '').toLowerCase().includes(q))
+  ).slice(0, 8);
+  if (!matches.length) { results.classList.remove('visible'); results.innerHTML = ''; return; }
+  results.innerHTML = matches.map(c => {
+    const av = c.foto
+      ? `<div class="related-result-avatar has-photo" style="background-image:url(${c.foto})"></div>`
+      : `<div class="related-result-avatar" style="background:${avatarColor(c.nombre)}">${initials(c.nombre)}</div>`;
+    const tagInfo = TAGS[c.categoria] || TAGS.otro;
+    return `<div class="related-result" data-id="${c.id}">${av}<div style="flex:1;min-width:0"><div class="related-result-name">${c.nombre}</div><div class="related-result-role">${tagInfo.icon} ${tagInfo.label}</div></div></div>`;
+  }).join('');
+  results.classList.add('visible');
+  results.querySelectorAll('.related-result').forEach(el => {
+    el.addEventListener('click', () => {
+      formRelated.push(el.dataset.id);
+      document.getElementById('fRelatedSearch').value = '';
+      renderRelatedSearch('');
+      renderRelatedChips();
+    });
+  });
+}
+
+// ===== RENDER TAG FILTERS =====
+function renderTagFilters() {
+  const container = document.getElementById('tagFilters');
+  const usedTags = [...new Set(contacts.map(c => c.categoria))];
+  container.innerHTML = '<div class="tag-chip' + (activeTag === 'todos' ? ' active' : '') + '" data-tag="todos">Todos</div>';
+  usedTags.sort().forEach(tag => {
+    const t = TAGS[tag] || TAGS.otro;
+    container.innerHTML += `<div class="tag-chip${activeTag === tag ? ' active' : ''}" data-tag="${tag}">${t.label}</div>`;
+  });
+  container.querySelectorAll('.tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeTag = chip.dataset.tag;
+      renderTagFilters();
+      renderContacts();
+    });
+  });
+}
+
+// ===== RENDER CONTACTS =====
+function renderContacts() {
+  const list = document.getElementById('contactsList');
+  let filtered = contacts;
+
+  if (activeTag !== 'todos') filtered = filtered.filter(c => c.categoria === activeTag);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(c =>
+      (c.nombre || '').toLowerCase().includes(q) ||
+      (c.notas || '').toLowerCase().includes(q) ||
+      (c.conocidoComo || '').toLowerCase().includes(q)
+    );
+  }
+
+  filtered.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+
+  document.getElementById('totalCount').textContent = String(contacts.length).padStart(2, '0');
+  document.getElementById('tagsCount').textContent = String(new Set(contacts.map(c => c.categoria)).size).padStart(2, '0');
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${searchQuery ? '⌕' : '◆ ◆ ◆'}</div>
+        <div class="empty-title">${searchQuery ? 'sin resultados' : 'agenda en blanco'}</div>
+        <div class="empty-sub">${searchQuery ? 'Probá otra búsqueda' : 'Sumá tu primer contacto'}</div>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((c, i) => {
+    const tag = TAGS[c.categoria] || TAGS.otro;
+    const color = avatarColor(c.nombre);
+    const avatarStyle = c.foto
+      ? `background-image:url(${c.foto})`
+      : `background:${color}`;
+    const avatarClass = c.foto ? 'contact-avatar has-photo' : 'contact-avatar';
+    const avatarText = c.foto ? '' : initials(c.nombre);
+    const relCount = (c.relacionados || []).filter(rid => contacts.some(x => x.id === rid)).length;
+    const meta = [];
+    if (c.conocidoFecha) meta.push(formatFechaCorta(c.conocidoFecha));
+    if (relCount) meta.push(relCount + ' vínculo' + (relCount > 1 ? 's' : ''));
+    return `
+      <div class="contact-card" data-id="${c.id}" style="animation-delay:${i * 0.04}s" onclick="showDetail('${c.id}')">
+        <div class="${avatarClass}" style="${avatarStyle}">${avatarText}</div>
+        <div class="contact-info">
+          <div class="contact-name">${c.nombre}</div>
+          ${meta.length ? `<div class="contact-role">${meta.join(' · ')}</div>` : ''}
+          <span class="contact-tag" style="color:${tag.color}">${tag.label}</span>
+          ${c.conocidoComo ? `<div class="contact-notes">« ${c.conocidoComo} »</div>` : (c.notas ? `<div class="contact-notes">${c.notas}</div>` : '')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function formatFechaCorta(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// ===== FORM: OPEN / CLOSE =====
+function openOverlay(id) {
+  const el = document.getElementById(id);
+  el.classList.add('open');
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+}
+function closeOverlay(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('visible');
+  setTimeout(() => el.classList.remove('open'), 300);
+}
+
+function openForm(contact) {
+  document.getElementById('formTitle').textContent = contact ? 'Editar contacto' : 'Nuevo contacto';
+  document.getElementById('editId').value = contact ? contact.id : '';
+  document.getElementById('fNombre').value = contact ? contact.nombre : '';
+  document.getElementById('fNotas').value = contact ? contact.notas || '' : '';
+  document.getElementById('fConocidoFecha').value = contact ? contact.conocidoFecha || '' : '';
+  document.getElementById('fConocidoComo').value = contact ? contact.conocidoComo || '' : '';
+  document.getElementById('fRelatedSearch').value = '';
+  const initialCat = contact ? (TAGS[contact.categoria] ? contact.categoria : 'otro') : 'moda';
+  populateCategoriaSelect(initialCat);
+  formRelated = contact && Array.isArray(contact.relacionados) ? [...contact.relacionados] : [];
+  setPhotoPreview(contact ? contact.foto || '' : '');
+  renderRelatedChips();
+  renderRelatedSearch('');
+  document.getElementById('deleteBtn').style.display = contact ? 'block' : 'none';
+  openOverlay('formOverlay');
+}
+
+// ===== FORM: SAVE =====
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const nombre = document.getElementById('fNombre').value.trim();
+  if (!nombre) { document.getElementById('fNombre').style.borderBottomColor = 'var(--danger)'; return; }
+
+  const id = document.getElementById('editId').value;
+  const finalId = id || genId();
+  const data = {
+    id: finalId,
+    nombre,
+    categoria: document.getElementById('fCategoria').value,
+    notas: document.getElementById('fNotas').value.trim(),
+    foto: formPhoto || '',
+    conocidoFecha: document.getElementById('fConocidoFecha').value || '',
+    conocidoComo: document.getElementById('fConocidoComo').value.trim(),
+    relacionados: [...new Set(formRelated)].filter(rid => rid !== finalId),
+    creado: id ? (contacts.find(c => c.id === id)?.creado || new Date().toISOString()) : new Date().toISOString(),
+    modificado: new Date().toISOString()
+  };
+
+  if (id) {
+    const idx = contacts.findIndex(c => c.id === id);
+    if (idx >= 0) contacts[idx] = data;
+  } else {
+    contacts.push(data);
+  }
+
+  contacts.forEach(c => {
+    if (!Array.isArray(c.relacionados)) c.relacionados = [];
+    if (data.relacionados.includes(c.id)) {
+      if (!c.relacionados.includes(finalId)) c.relacionados.push(finalId);
+    } else if (c.id !== finalId) {
+      c.relacionados = c.relacionados.filter(rid => rid !== finalId);
+    }
+  });
+
+  try {
+    save();
+  } catch (err) {
+    alert('No se pudo guardar (almacenamiento lleno). Probá con una foto más chica o eliminá contactos.');
+    return;
+  }
+  closeOverlay('formOverlay');
+  renderTagFilters();
+  renderContacts();
+});
+
+// ===== FORM: DELETE =====
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  const id = document.getElementById('editId').value;
+  if (id && confirm('¿Eliminar este contacto?')) {
+    contacts = contacts.filter(c => c.id !== id);
+    contacts.forEach(c => {
+      if (Array.isArray(c.relacionados)) c.relacionados = c.relacionados.filter(rid => rid !== id);
+    });
+    save();
+    closeOverlay('formOverlay');
+    closeOverlay('detailOverlay');
+    renderTagFilters();
+    renderContacts();
+  }
+});
+
+// ===== DETAIL VIEW =====
+function formatFecha(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function showDetail(id) {
+  const c = contacts.find(x => x.id === id);
+  if (!c) return;
+  const tag = TAGS[c.categoria] || TAGS.otro;
+  const color = avatarColor(c.nombre);
+  const rows = [];
+  if (c.conocidoFecha) rows.push(`<div class="detail-row"><div class="detail-row-icon">◷</div><span><strong style="font-weight:500">Conocido el</strong> ${formatFecha(c.conocidoFecha)}</span></div>`);
+  if (c.conocidoComo) rows.push(`<div class="detail-row"><div class="detail-row-icon">❦</div><span style="font-style:italic">« ${c.conocidoComo} »</span></div>`);
+  if (c.notas) rows.push(`<div class="detail-row"><div class="detail-row-icon">✎</div><span>${c.notas}</span></div>`);
+
+  let relatedHTML = '';
+  const rel = (c.relacionados || []).map(rid => contacts.find(x => x.id === rid)).filter(Boolean);
+  if (rel.length) {
+    relatedHTML = `
+      <div class="detail-section-label">Vínculos · ${rel.length}</div>
+      <div class="detail-related-list">
+        ${rel.map(r => {
+          const av = r.foto
+            ? `<div class="related-result-avatar has-photo" style="background-image:url(${r.foto})"></div>`
+            : `<div class="related-result-avatar" style="background:${avatarColor(r.nombre)}">${initials(r.nombre)}</div>`;
+          const ti = TAGS[r.categoria] || TAGS.otro;
+          return `<div class="detail-related-item" onclick="showDetail('${r.id}')">${av}<div style="flex:1;min-width:0"><div class="rel-name">${r.nombre}</div><div class="related-result-role">${ti.label}</div></div><span class="detail-arrow">→</span></div>`;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  const avatarStyle = c.foto ? `background-image:url(${c.foto})` : `background:${color}`;
+  const avatarClass = c.foto ? 'detail-avatar has-photo' : 'detail-avatar';
+  const avatarText = c.foto ? '' : initials(c.nombre);
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-header">
+      <div class="${avatarClass}" style="${avatarStyle}">${avatarText}</div>
+      <div class="detail-name">${c.nombre}</div>
+      <span class="contact-tag" style="color:${tag.color};margin-top:14px">${tag.label}</span>
+    </div>
+    ${rows.join('')}
+    ${relatedHTML}
+    <div class="detail-actions">
+      <button class="btn btn-secondary" onclick="closeOverlay('detailOverlay')">Cerrar</button>
+      <button class="btn btn-primary" onclick="closeOverlay('detailOverlay');openForm(contacts.find(c=>c.id==='${c.id}'))">Editar</button>
+    </div>
+  `;
+  openOverlay('detailOverlay');
+}
+
+// ===== SEARCH =====
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+searchInput.addEventListener('input', () => {
+  searchQuery = searchInput.value.trim();
+  searchClear.classList.toggle('visible', searchQuery.length > 0);
+  renderContacts();
+});
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchQuery = '';
+  searchClear.classList.remove('visible');
+  renderContacts();
+});
+
+// ===== BUTTONS =====
+document.getElementById('addBtn').addEventListener('click', () => openForm(null));
+document.getElementById('cancelBtn').addEventListener('click', () => closeOverlay('formOverlay'));
+
+// ===== FOTO INPUT =====
+document.getElementById('photoInput').addEventListener('change', async e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  try {
+    const dataUrl = await resizeImage(file);
+    setPhotoPreview(dataUrl);
+  } catch {
+    alert('No se pudo procesar la imagen.');
+  }
+  e.target.value = '';
+});
+
+// ===== NUEVA CATEGORÍA =====
+document.getElementById('addCategoryBtn').addEventListener('click', () => {
+  const nombre = prompt('Nombre de la nueva categoría:');
+  if (!nombre || !nombre.trim()) return;
+  const emoji = (prompt('Emoji o símbolo (opcional):') || '◆').trim() || '◆';
+  const key = slugify(nombre);
+  if (TAGS[key]) {
+    populateCategoriaSelect(key);
+    return;
+  }
+  const palette = TAG_COLOR_PALETTE[Object.keys(customTags).length % TAG_COLOR_PALETTE.length];
+  customTags[key] = { label: nombre.trim(), icon: emoji, color: palette.color, bg: palette.bg };
+  saveCustomTags();
+  rebuildTags();
+  populateCategoriaSelect(key);
+  renderTagFilters();
+});
+
+// ===== RELACIONADOS: search input =====
+const relatedSearchInput = document.getElementById('fRelatedSearch');
+relatedSearchInput.addEventListener('input', () => renderRelatedSearch(relatedSearchInput.value));
+relatedSearchInput.addEventListener('focus', () => renderRelatedSearch(relatedSearchInput.value));
+document.addEventListener('click', e => {
+  if (!e.target.closest('.related-search-wrap')) {
+    document.getElementById('relatedResults').classList.remove('visible');
+  }
+});
+
+// Close overlays on backdrop click
+['formOverlay', 'detailOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target.classList.contains('overlay')) closeOverlay(id);
+  });
+});
+
+// ===== PWA INSTALL =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'flex';
+});
+document.getElementById('installBanner').addEventListener('click', () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  }
+  document.getElementById('installBanner').style.display = 'none';
+});
+document.getElementById('installClose').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('installBanner').style.display = 'none';
+});
+
+// ===== EXPORT / IMPORT (para backup) =====
+function exportContacts() {
+  const blob = new Blob([JSON.stringify(contacts, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'miscontactos_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+}
+function importContacts(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (Array.isArray(data)) {
+        contacts = data;
+        save();
+        renderTagFilters();
+        renderContacts();
+        alert('Importados ' + data.length + ' contactos');
+      }
+    } catch { alert('Archivo inválido'); }
+  };
+  reader.readAsText(file);
+}
+
+// ===== INIT =====
+renderTagFilters();
+renderContacts();
+</script>
+</body>
+</html>
