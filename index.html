@@ -213,6 +213,40 @@
   .install-text { flex: 1; }
   .install-close { padding: 4px; cursor: pointer; opacity: 0.7; }
 
+  /* ===== GOOGLE DRIVE SYNC ===== */
+  .drive-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    background: var(--paper);
+    border: none;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+  }
+  .drive-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-subtle);
+    flex-shrink: 0;
+  }
+  .drive-bar[data-state="ok"] .drive-dot { background: var(--sage); }
+  .drive-bar[data-state="syncing"] .drive-dot { background: var(--sage); animation: drivePulse 1s ease-in-out infinite; }
+  .drive-bar[data-state="error"] .drive-dot,
+  .drive-bar[data-state="reconnect"] .drive-dot { background: var(--danger); }
+  .drive-bar[data-state="off"] { background: var(--ink); color: var(--cream); border-bottom-color: var(--ink); }
+  .drive-bar[data-state="off"] .drive-dot { background: var(--cream); }
+  .drive-text { flex: 1; }
+  .drive-sub { font-weight: 400; letter-spacing: 0.04em; text-transform: none; opacity: 0.7; font-size: 11px; }
+  @keyframes drivePulse { 50% { opacity: 0.25; } }
+
   /* ===== SEARCH (destacado, sticky) ===== */
   .search-wrap {
     padding: 18px 22px 14px;
@@ -875,6 +909,13 @@
   </button>
 </div>
 
+<!-- GOOGLE DRIVE -->
+<button type="button" class="drive-bar" id="driveBar" data-state="off">
+  <span class="drive-dot"></span>
+  <span class="drive-text" id="driveText">Guardar en Google Drive</span>
+  <span class="drive-sub" id="driveSub">conectar</span>
+</button>
+
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner" style="display:none">
   <span style="font-size:13px">▲</span>
@@ -948,10 +989,17 @@
   </div>
 </div>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 // ===== CONFIG =====
 const AVATAR_COLORS = ['#15130f','#2c2722','#3f5870','#3f5b4d','#7a3a44','#3a4a3a','#8a4a5b','#3d342a'];
 const STORAGE_KEY = 'miscontactos_data';
+const DELETED_KEY = 'miscontactos_deleted';
+
+// Google Drive: pegar acá el "ID de cliente" de OAuth creado en Google Cloud.
+const GOOGLE_CLIENT_ID = '';
+const DRIVE_FOLDER_NAME = 'Mis contactos';
+const DRIVE_FILE_NAME = 'miscontactos_datos.json';
 
 // ===== STATE =====
 let contacts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -971,7 +1019,17 @@ function avatarColor(name) {
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts)); }
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+  Drive.markDirty();
+}
+
+// Registra un borrado para que no "reviva" al sincronizar con otro dispositivo.
+function markDeleted(id) {
+  const deleted = JSON.parse(localStorage.getItem(DELETED_KEY) || '{}');
+  deleted[id] = new Date().toISOString();
+  localStorage.setItem(DELETED_KEY, JSON.stringify(deleted));
+}
 
 // Parsea string de rasgos a array limpio.
 function parseRasgos(str) {
@@ -1177,6 +1235,7 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
   const id = document.getElementById('editId').value;
   if (id && confirm('¿Eliminar este contacto?')) {
     contacts = contacts.filter(c => c.id !== id);
+    markDeleted(id);
     save();
     closeOverlay('formOverlay');
     closeOverlay('detailOverlay');
@@ -1348,7 +1407,9 @@ function importContacts(file) {
     try {
       const data = JSON.parse(e.target.result);
       if (Array.isArray(data)) {
-        contacts = data;
+        const keep = new Set(data.map(c => c.id));
+        contacts.filter(c => !keep.has(c.id)).forEach(c => markDeleted(c.id));
+        contacts = data.map(c => ({ ...c, modificado: new Date().toISOString() }));
         save();
         renderContacts();
         alert('Importados ' + data.length + ' contactos');
@@ -1358,8 +1419,233 @@ function importContacts(file) {
   reader.readAsText(file);
 }
 
+// ===== GOOGLE DRIVE SYNC =====
+// Los datos viven en un archivo JSON dentro de la carpeta "Mis contactos" del Drive
+// de la cuenta conectada. localStorage queda como copia local para usar sin conexión.
+const Drive = (() => {
+  const SCOPE = 'https://www.googleapis.com/auth/drive.file';
+  const API = 'https://www.googleapis.com/drive/v3';
+  const UPLOAD = 'https://www.googleapis.com/upload/drive/v3';
+  const STATE_KEY = 'miscontactos_drive';   // { email, fileId, lastSync }
+  const TOKEN_KEY = 'miscontactos_token';   // { token, exp }
+  const DIRTY_KEY = 'miscontactos_dirty';   // marca de cambios sin subir
+
+  let state = readJSON(STATE_KEY, null);
+  let syncing = false, again = false, timer = null;
+
+  function readJSON(k, fallback) {
+    try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch { return fallback; }
+  }
+  function writeJSON(k, v) {
+    if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v));
+  }
+  function authError() { return Object.assign(new Error('auth'), { auth: true }); }
+  const stamp = c => c.modificado || c.creado || '';
+
+  function validToken() {
+    const t = readJSON(TOKEN_KEY, null);
+    return t && t.exp > Date.now() + 60000 ? t.token : null;
+  }
+
+  // Abre la ventana de Google: tiene que llamarse directo desde un toque del usuario.
+  function requestToken() {
+    return new Promise((resolve, reject) => {
+      if (!window.google?.accounts?.oauth2) {
+        return reject(new Error('Google todavía no cargó. Probá de nuevo en unos segundos.'));
+      }
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: SCOPE,
+        callback: resp => {
+          if (resp.error) return reject(new Error(resp.error));
+          writeJSON(TOKEN_KEY, { token: resp.access_token, exp: Date.now() + resp.expires_in * 1000 });
+          resolve(resp.access_token);
+        },
+        error_callback: err => reject(Object.assign(new Error(err.type || 'popup'), { popup: err.type })),
+      });
+      client.requestAccessToken({ prompt: state ? '' : 'consent', login_hint: state?.email || '' });
+    });
+  }
+
+  async function api(path, opts = {}, base = API) {
+    const token = validToken();
+    if (!token) throw authError();
+    const res = await fetch(base + path, {
+      ...opts,
+      headers: { Authorization: 'Bearer ' + token, ...(opts.headers || {}) },
+    });
+    if (res.status === 401) { writeJSON(TOKEN_KEY, null); throw authError(); }
+    if (!res.ok) throw new Error('Drive ' + res.status);
+    return res;
+  }
+  async function findOne(q) {
+    const res = await api('/files?spaces=drive&fields=files(id)&q=' + encodeURIComponent(q + ' and trashed=false'));
+    return (await res.json()).files[0]?.id || null;
+  }
+  async function create(meta) {
+    const res = await api('/files?fields=id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(meta),
+    });
+    return (await res.json()).id;
+  }
+
+  // Devuelve el id del archivo de datos, creando carpeta y archivo si no existen.
+  async function ensureFile() {
+    if (state.fileId) {
+      try {
+        const f = await (await api(`/files/${state.fileId}?fields=id,trashed`)).json();
+        if (!f.trashed) return state.fileId;
+      } catch (e) { if (e.auth) throw e; }
+    }
+    const folderQ = `name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder'`;
+    const folderId = await findOne(folderQ)
+      || await create({ name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' });
+    const fileId = await findOne(`name='${DRIVE_FILE_NAME}' and '${folderId}' in parents`)
+      || await create({ name: DRIVE_FILE_NAME, parents: [folderId], mimeType: 'application/json' });
+    setState({ fileId });
+    return fileId;
+  }
+
+  async function download(fileId) {
+    const text = await (await api(`/files/${fileId}?alt=media`)).text();
+    if (!text.trim()) return { contacts: [], deleted: {} };
+    const d = JSON.parse(text);
+    if (Array.isArray(d)) return { contacts: d, deleted: {} };
+    return { contacts: d.contacts || [], deleted: d.deleted || {} };
+  }
+  async function upload(fileId, data) {
+    await api(`/files/${fileId}?uploadType=media`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app: 'MisContactos', version: 1, actualizado: new Date().toISOString(), ...data }),
+    }, UPLOAD);
+  }
+
+  // Une lo local con lo de Drive: por cada contacto gana la versión modificada más
+  // recientemente, y un borrado gana si es posterior a la última edición.
+  function merge(local, remote) {
+    const deleted = { ...remote.deleted };
+    for (const [id, at] of Object.entries(local.deleted)) {
+      if (!deleted[id] || at > deleted[id]) deleted[id] = at;
+    }
+    const byId = new Map();
+    for (const c of [...remote.contacts, ...local.contacts]) {
+      const prev = byId.get(c.id);
+      if (!prev || stamp(c) > stamp(prev)) byId.set(c.id, c);
+    }
+    const merged = [...byId.values()].filter(c => !deleted[c.id] || stamp(c) > deleted[c.id]);
+    return { contacts: merged, deleted };
+  }
+  const signature = d => JSON.stringify([d.contacts.map(c => c.id + stamp(c)).sort(), Object.keys(d.deleted).sort()]);
+
+  function setState(patch) {
+    state = patch ? { ...(state || {}), ...patch } : null;
+    writeJSON(STATE_KEY, state);
+  }
+
+  async function sync() {
+    if (!state || !validToken()) { render(); return; }
+    if (syncing) { again = true; return; }
+    syncing = true;
+    render('syncing');
+    try {
+      const fileId = await ensureFile();
+      const remote = await download(fileId);
+      const dirtyMark = localStorage.getItem(DIRTY_KEY);
+      const merged = merge({ contacts, deleted: readJSON(DELETED_KEY, {}) }, remote);
+      contacts = merged.contacts;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+      writeJSON(DELETED_KEY, merged.deleted);
+      renderContacts();
+      if (dirtyMark || signature(merged) !== signature(remote)) await upload(fileId, merged);
+      if (localStorage.getItem(DIRTY_KEY) === dirtyMark) localStorage.removeItem(DIRTY_KEY);
+      setState({ lastSync: Date.now() });
+      render('ok');
+    } catch (e) {
+      console.warn('Drive:', e);
+      render(e.auth ? 'reconnect' : navigator.onLine ? 'error' : 'offline');
+    } finally {
+      syncing = false;
+      if (again) { again = false; schedule(); }
+    }
+  }
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sync, 1200);
+  }
+  function markDirty() {
+    localStorage.setItem(DIRTY_KEY, String(Date.now()));
+    schedule();
+  }
+
+  function render(s) {
+    if (!state) s = 'off';
+    else if (!s) s = validToken() ? 'ok' : 'reconnect';
+    const pending = !!localStorage.getItem(DIRTY_KEY);
+    const email = state?.email || '';
+    const msgs = {
+      off:       ['Guardar en Google Drive', 'conectar'],
+      syncing:   ['Guardando en Drive…', email],
+      ok:        ['Guardado en Google Drive', email],
+      reconnect: ['Drive en pausa', pending ? 'tocá para guardar' : 'tocá para reconectar'],
+      offline:   ['Sin conexión', 'se guarda al volver'],
+      error:     ['No se pudo guardar en Drive', 'tocá para reintentar'],
+    };
+    const bar = document.getElementById('driveBar');
+    bar.dataset.state = s === 'offline' ? 'error' : s;
+    [document.getElementById('driveText').textContent, document.getElementById('driveSub').textContent] = msgs[s];
+  }
+
+  function disconnect() {
+    const t = validToken();
+    if (t && window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(t, () => {});
+    writeJSON(TOKEN_KEY, null);
+    setState(null);
+    render();
+  }
+
+  async function onBarClick() {
+    if (!GOOGLE_CLIENT_ID) {
+      alert('Falta configurar el ID de cliente de Google (GOOGLE_CLIENT_ID) en el código.');
+      return;
+    }
+    const current = document.getElementById('driveBar').dataset.state;
+    if (current === 'syncing') return;
+    if (current === 'ok') {
+      if (confirm('¿Desconectar Google Drive en este dispositivo?\nLos contactos siguen guardados en Drive y en este teléfono.')) disconnect();
+      return;
+    }
+    try {
+      if (!validToken()) await requestToken();
+      if (!state?.email) {
+        const about = await (await api('/about?fields=user(emailAddress)')).json();
+        setState({ email: about.user.emailAddress });
+      }
+      await sync();
+    } catch (e) {
+      if (e.popup !== 'popup_closed') alert('No se pudo conectar con Google Drive: ' + e.message);
+      render();
+    }
+  }
+
+  function init() {
+    document.getElementById('driveBar').addEventListener('click', onBarClick);
+    render();
+    if (state && validToken()) sync();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && state && validToken()) sync();
+    });
+    window.addEventListener('online', () => { if (state && validToken()) sync(); });
+  }
+
+  return { init, markDirty };
+})();
+
 // ===== INIT =====
 renderContacts();
+Drive.init();
 
 // ===== APP ICON + MANIFEST (PWA en iPhone) =====
 (function setupAppIcon() {
